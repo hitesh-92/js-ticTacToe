@@ -1,0 +1,36 @@
+body{
+  background-color: white;
+  text-align: center;
+  margin: 0 7em;
+}
+
+h1{
+  /* border: 1px solid black; */
+  padding-bottom: 2em;
+}
+
+.container{
+  /* border: 1px solid grey; */
+  padding-left: 20vw;
+  margin: 0;
+  display: grid;
+  grid-template-rows: repeat(3, 10vw);
+  grid-template-columns: repeat(3, 10vw);
+  grid-gap: 1em;
+}
+
+.box{
+  box-shadow: 0 0 3px 0 black;
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+}
+
+
+.clickedRed{
+  background-color: red
+}
+
+.clickedGreen{
+  background-color: green
+}
