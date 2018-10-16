@@ -1,39 +1,41 @@
-//player click
-function playerClick(player, number){
-  const id = '#'+number;
-  let playerClass;
-
-  if (player == 0){
-    playerClass = "clickedRed";
-  } else {
-    playerClass = "clickedGreen";
-  }
-
-  $(id).click(function(){
-    $(this).addClass(playerClass);
-  })
-}
-// playerClick(1,'two');
-
-
 $(document).ready(function(){
-  // $("#one").click(playerClick(1, 'one'));
-});
+
+  $( "#nine" ).bind( "click", function( event ) {
+    console.log(event)
+    console.log(event.currentTarget.id)
+  });
+
+});//doc ready
 
 class Player {
-  constructor(turn) {
-    this.turn = turn,
-    this.selected = [],
+  constructor(turn, symbol) {
+    this.turn = turn;
+    this.symbol = symbol,
+    this.selected = ['one','two','three'],
     this.won = false
-    //add symbol 0=o 1=x
   }
 
   switch(){
-    this.turn = !this.turn;
+    this.turn =! this.turn
   }
-}
 
-let player1 = new Player(true);
-let player2 = new Player(false);
+  checkWin(){
+    let result = false;
+    //winning sequences
+    const winnings = [ [1,2,3], [4,5,6], [7,8,9], [7,4,1], [8,5,2], [9,6,3], [7,5,3], [1,5,9] ];
 
-console.log(player1.turn);
+    //loop over sequences, loop into each sequence and check
+    for (seq of winnings) {
+      //hold true if match, will be reset each loop
+      let res = [];
+      for (each of seq){
+      	if(each == selected[0] || each == selected[1] || each == selected[2]){
+      		res.push(true)
+      	}
+      }
+      if (res.length == 3) result = true;
+    }
+
+  }
+
+}//player class
