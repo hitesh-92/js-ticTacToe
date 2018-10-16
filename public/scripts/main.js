@@ -1,31 +1,41 @@
 $(document).ready(function(){
   // let res = startGame();
-  player1 = new Player(true, 'X');
-  player2 = new Player(false, 'O');
+  var player1 = new Player(true, 'X');
+  var player2 = new Player(false, 'O');
 
   var numbers = [1,2,3,4,5,6,7,8,9]
+
 
   for (num of numbers) {
 
 
     $(`#${num}`).click(function(e){
+
       function removePick(numIndex, arrLength) {
           if (numIndex > -1) numbers.splice(numIndex, 1);
           if (numbers.length < arrLength) return true;
       }
 
 
-      // if(player1.turn){
+      if(player1.turn){
 
         $(this).addClass("clickedRed");
-        // let id = parseInt(e.currentTarget.id);
-        let index = numbers.indexOf(parseInt(e.currentTarget.id));
-        let numArrLen = numbers.length;
-        let pick = removePick(index, numArrLen);
+        player1.turn = false;
+        player2.turn = true;
+        // let index = numbers.indexOf(parseInt(e.currentTarget.id));
+        // let numArrLen = numbers.length;
+        // let pick = removePick(index, numArrLen);
 
-      // } else {
+      } else {
 
-      // }
+        $(this).addClass("clickedGreen");
+        player1.turn = true;
+        player2.turn = false;
+      }
+
+      let index = numbers.indexOf(parseInt(e.currentTarget.id));
+      let numArrLen = numbers.length;
+      let pick = removePick(index, numArrLen);
 
 
     }) // .click
