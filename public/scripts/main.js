@@ -20,20 +20,25 @@ $(document).ready(function(){
       if(player1.turn){
 
         $(this).addClass("clickedRed");
-        player1.turn = false;
-        player2.turn = true;
-        let index = numbers.indexOf(parseInt(e.currentTarget.id));
+        let id = parseInt(e.currentTarget.id);
+        let index = numbers.indexOf(id);
         let numArrLen = numbers.length;
         let pick = removePick(index, numArrLen);
-
+        player1.select(id);
+        player1.switch();
+        player2.switch();
+        console.log(player1.selected);
       } else {
 
         $(this).addClass("clickedGreen");
-        player1.turn = true;
-        player2.turn = false;
-        let index = numbers.indexOf(parseInt(e.currentTarget.id));
+        let id = parseInt(e.currentTarget.id);
+        let index = numbers.indexOf(id);
         let numArrLen = numbers.length;
         let pick = removePick(index, numArrLen);
+        player2.select(id);
+        player2.switch();
+        player1.switch();
+        console.log(player2.selected);
       }
 
 
@@ -55,10 +60,12 @@ class Player {
     this.won = false
   }
 
-  //add num and switch
+  switch(){
+    this.turn = !this.turn;
+  }
+
   select(number){
     this.selected.push(number);
-    this.turn = !this.turn
   }
 
   checkWin(){
