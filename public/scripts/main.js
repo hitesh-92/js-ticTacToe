@@ -22,20 +22,20 @@ $(document).ready(function(){
         $(this).addClass("clickedRed");
         player1.turn = false;
         player2.turn = true;
-        // let index = numbers.indexOf(parseInt(e.currentTarget.id));
-        // let numArrLen = numbers.length;
-        // let pick = removePick(index, numArrLen);
+        let index = numbers.indexOf(parseInt(e.currentTarget.id));
+        let numArrLen = numbers.length;
+        let pick = removePick(index, numArrLen);
 
       } else {
 
         $(this).addClass("clickedGreen");
         player1.turn = true;
         player2.turn = false;
+        let index = numbers.indexOf(parseInt(e.currentTarget.id));
+        let numArrLen = numbers.length;
+        let pick = removePick(index, numArrLen);
       }
 
-      let index = numbers.indexOf(parseInt(e.currentTarget.id));
-      let numArrLen = numbers.length;
-      let pick = removePick(index, numArrLen);
 
 
     }) // .click
@@ -44,67 +44,6 @@ $(document).ready(function(){
 
 
 });//doc ready
-
-//init game
-function startGame(){
-  console.log('1. init');
-
-  p1 = new Player(true, 'X');
-  p2 = new Player(false, 'O');
-
-  let playing = true;
-  while(playing){
-    console.log('2. playing');
-    let numbers = [1,2,3,4,5,6,7,8,9];
-    let id;
-
-    //remove number from array
-    function removePick(numIndex, arrLength) {
-        if (numIndex-1 > -1) numbers.splice(numIndex-1, 1);
-        if (numbers.length < arrLength) return true;
-    }
-
-    //click on an available square
-
-    for (num of numbers) {
-      let divID = '#'+num;
-
-      $(divID).click(function(e){
-          let id = e.currentTarget.id;
-          let pick = removePick(numbers.indexOf(id), numbers.length);
-      })
-
-    }
-
-
-
-
-    console.log('5. end of while loops');
-
-
-
-    //add pick, checkWin &|&| switch : return
-    if(p1.turn){
-      console.log('6. p1 calc');
-      p1.select(id);
-      p1.checkWin();
-      if(p1.checkWin) return true;
-      p1.switch()
-    } else {
-      console.log('6. p2 calc');
-      p2.select(id);
-      p2.checkWin();
-      if(p2.checkWin) return false;
-      p2.switch();
-    }
-
-
-    playing = false;
-
-
-  }//while (playing)
-}//startGame
-
 
 
 
