@@ -1,30 +1,37 @@
 $(document).ready(function(){
+  // let res = startGame();
+  player1 = new Player(true, 'X');
+  player2 = new Player(false, 'O');
+
+  var numbers = [1,2,3,4,5,6,7,8,9]
+
+  for (num of numbers) {
 
 
-let arr = [1,2,3,4,5,6,7,8,9]
-
-function removePick(numIndex, arrLength) {
-    if (numIndex-1 > -1) arr.splice(numIndex-1, 1);
-    if (arr.length < arrLength) return true;
-}
-
+    $(`#${num}`).click(function(e){
+      function removePick(numIndex, arrLength) {
+          if (numIndex > -1) numbers.splice(numIndex, 1);
+          if (numbers.length < arrLength) return true;
+      }
 
 
-$("#9").click(function(e){
-  let id = e.currentTarget.id;
-  console.log(id);
-  $(this).addClass("clickedRed");
-  let pick = removePick(id, arr.length);
-  console.log(arr, pick)
-});
-//
-// $("#2").click(function(e){
-//   let id = e.currentTarget.id;
-//   console.log(id);
-//   $(this).addClass("clickedRed");
-//   let pick = removePick(id, arr.length);
-//   console.log(arr, pick)
-// });
+      // if(player1.turn){
+
+        $(this).addClass("clickedRed");
+        // let id = parseInt(e.currentTarget.id);
+        let index = numbers.indexOf(parseInt(e.currentTarget.id));
+        let numArrLen = numbers.length;
+        let pick = removePick(index, numArrLen);
+
+      // } else {
+
+      // }
+
+
+    }) // .click
+
+  }
+
 
 });//doc ready
 
@@ -41,38 +48,24 @@ function startGame(){
     let numbers = [1,2,3,4,5,6,7,8,9];
     let id;
 
+    //remove number from array
+    function removePick(numIndex, arrLength) {
+        if (numIndex-1 > -1) numbers.splice(numIndex-1, 1);
+        if (numbers.length < arrLength) return true;
+    }
+
     //click on an available square
-    // while(true){
-    //
-    //   console.log('3. pick square');
-    //
-    //   let result;
-    //
-    //   //check to see if the sqaure with is free. remove from array if true
-    //   // function removePick(numIndex, arrLength) {
-    //   //     if (numIndex > -1) numbers.splice(numIndex, 1);
-    //   //     if (numbers.length < arrLength) return true;
-    //   // }
-    //
-    //   $("*").click(function(e){
-    //     console.log('3[a] Click a square');
-    //     let numebrsLength = numbers.length;
-    //     let index = numbers.indexOf(e.currentTarget.id);
-    //     result = removePick(index, numbersLength);
-    //     console.log('3[b]. removePick:', result);
-    //   });
-    //
-    //   if(result){
-    //     id = e.currentTarget.id;
-    //     console.log('4. square picked');
-    //     break;
-    //   }
-    // }//while true
 
+    for (num of numbers) {
+      let divID = '#'+num;
 
-    // $("*").click(function(e){
-    //
-    // });
+      $(divID).click(function(e){
+          let id = e.currentTarget.id;
+          let pick = removePick(numbers.indexOf(id), numbers.length);
+      })
+
+    }
+
 
 
 
@@ -113,12 +106,10 @@ class Player {
     this.won = false
   }
 
+  //add num and switch
   select(number){
-    this.selected.push(number)
-  }
-
-  switch(){
-    this.turn =! this.turn
+    this.selected.push(number);
+    this.turn = !this.turn
   }
 
   checkWin(){
@@ -127,20 +118,18 @@ class Player {
     //winning sequences
     const winnings = [ [1,2,3], [4,5,6], [7,8,9], [7,4,1], [8,5,2], [9,6,3], [7,5,3], [1,5,9] ];
 
-    //loop over sequences, loop into each sequence and check
-    for (seq of winnings) {
-      //hold true if match, will be reset each loop
+    for (var seq = 0; seq < winnings.length; seq++) {
+      // winnings[seq]
       let res = [];
-
-      for (each of seq){
-      	if(each == selected[0] || each == selected[1] || each == selected[2]){
-      		res.push(true)
-      	}
+      for (var each = 0; each < seq.length; e++) {
+        // winnings[seq][each]
+        for (var i = 0; i < this.selected; i++) {
+          if(this.selected[i] == winnings[seq][each]) res.push(true)
+        }
       }
-
-      //at end of sequence loop check if 3 match
-      if (res.length == 3) result = true;
+      if(res.length==3) result = true;
     }
+
 
     // change this.won status
     if(result = true){
