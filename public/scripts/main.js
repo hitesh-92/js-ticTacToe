@@ -7,12 +7,9 @@ $(document).ready(function(){
     $(this).fadeOut(500);
     $(".container").fadeIn(1000);
     $("#message").fadeOut()
-
     //init players
     var player1 = new Player(true, 'X');
     var player2 = new Player(false, 'O');
-
-    // console.log('* INIT *',player1,player2);
 
     for (var num = 1; num <= 9; num++) {
       $(`#${num}`).removeClass("clickedGreen");
@@ -29,54 +26,57 @@ $(document).ready(function(){
 
           //if successful deletes from player2's array + color square
           if(picked) {
-            player2.removeNumber(id, false);
+            player2.removeNumber(e.currentTarget.id, false);
             $(this).addClass("clickedRed");
           }
 
-          //length of array, if 9 all moves made
+          player1.checkWin()
+
+          //length of array, if 9 all moves made | only needed for player1
           let count = player1.getLength();
 
-          //tie and win message. message no longer true, will end game
-          if(count == 9 && player1.won == false){
-            message = "Tie Break! No Winner This Time!"
-          } else if (player1.won) {
-            message = "Player1 Has Won!!";
-            // console.log(message);
-          }
+          //change message if won or tie
+          if( player1.won ) message = "Player1 Has Won!";
+          if( count == 9 && player1.won == false ) message = "Tie Break! No Winner This Time";
 
           //end game
-          if(!message){
+          if(message != true){
+            console.log('player1', '| picked',picked, '| count',count, '| won',player1.won), '| numbers',player1.numbers;
             $("#message").text(message).fadeIn();
             $(".container").fadeOut();
             $("#init-btn").fadeIn();
             player1.reset(true); player2.reset();
+            message = true;
           }
 
           //switch players, continue game
           player1.switch(); player2.switch();
 
-          console.log('player1', '| picked',picked, '| count',count);
-
-
+          // console.log('player1', '| picked',picked, '| count',count, '| won',player1.won);
+          console.log('player1', '| picked',picked, '| count',count, '| won',player1.won), '| numbers',player1.numbers;
+          
         } else { // * PLAYER 2 *
 
           let message = true;
-          $(this).addClass("clickedGreen");
+
           let picked = player2.removeNumber(e.currentTarget.id, true);
-          if(picked) player1.removeNumber(id, false);
-          let check = player2.checkWin();
-          let count = player2.getLength();
-          if(count == 9 && !check){
-            message = "Tie Break! No Winner This Time!"
-          } else if (check) {
-            message = "Player1 Has Won!!"
+          if(picked) {
+            player1.removeNumber(e.currentTarget.id, false);
+            $(this).addClass("clickedGreen");
           }
-          if(!message){
+
+          player2.checkWin();
+
+          if (player2.won) message = "Player2 Has Won!!";
+
+          if(message != true){
             $("#message").text(message).fadeIn();
             $(".container").fadeOut();
             $("#init-btn").fadeIn();
             player1.reset(true); player2.reset();
+            message = true;
           }
+
           player1.switch(); player2.switch();
 
         }// end player2
@@ -123,8 +123,6 @@ class Player {
       for (var i = 0; i < this.numbers.length; i++){
         if (i == num) {
           run = true;
-        } else {
-          return false;
         }
       }
     }
@@ -139,10 +137,11 @@ class Player {
       return false;
     }
 
+
   }
 
   checkWin(){
-    // let result = false;
+    let result = false;
 
     //winning sequences
     const winSequences = [ [1,2,3], [4,5,6], [7,8,9], [7,4,1], [8,5,2], [9,6,3], [7,5,3], [1,5,9] ];
@@ -164,13 +163,15 @@ class Player {
 
         //check if 3 matches made
         if (count == 3){
-          // result = true;
-          this.won = true;
+          result = true;
+          // this.won = true;
         }
+
       }
-    }
+
+    }//for
 
     // change this.won status
-    // if(result) this.won = true;
+    if(result) this.won = true;
   }//checkWin
 }//player class
