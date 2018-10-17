@@ -3,6 +3,7 @@ $(document).ready(function(){
   $(".container").hide();
 
   $("#init-btn").click(function(){
+
     $(this).fadeOut(500);
     $(".container").fadeIn(1000);
     $("#winMessaege").fadeOut()
@@ -11,8 +12,11 @@ $(document).ready(function(){
     var player1 = new Player(true, 'X');
     var player2 = new Player(false, 'O');
 
+    console.log('* INIT *',player1,player2);
+
     //array holds numers
     var numbers = [1,2,3,4,5,6,7,8,9]
+    console.log('init',numbers);
 
     for (num of numbers) {
       $(`#${num}`).removeClass("clickedGreen");
@@ -20,60 +24,95 @@ $(document).ready(function(){
 
       $(`#${num}`).click(function(e){
 
-        function removePick(numIndex, arrLength) {
-            if (numIndex > -1) numbers.splice(numIndex, 1);
-            if (numbers.length < arrLength) return true;
+        function removePick(numIndex, arrLength, mainArray) {
+            if (numIndex > -1) mainArray.splice(numIndex, 1);
+            if (mainArray.length < arrLength) return mainArray;
         }
 
-        if(player1.turn){
+
+        if(player1.turn){ //  * PLAYER 1 *
 
           $(this).addClass("clickedRed");
-          let id = parseInt(e.currentTarget.id);
-          let index = numbers.indexOf(id);
-          let numArrLen = numbers.length;
-          let pick = removePick(index, numArrLen);
-          player1.select(id);
-          player1.switch();
-          player2.switch();
-          // console.log(player1.selected);
-          player1.checkWin()
-          // console.log(player1.won);
-          if (player1.won){
-            console.log('p1 win');
-            $("#winMessaege").html("<i>Player1 has won!</i>")
-            $("#winMessaege").fadeIn()
-            $(".container").fadeOut()
+          // let id = parseInt(e.currentTarget.id);
 
-            $("#init-btn").fadeIn()
-            player1.reset()
-            player2.reset()
-            player1.turn = true;
-          }
-        } else {
+          let picked = player1.removeNumber(e.currentTarget.id, true);
+          if(picked) player2.removeNumber(id, false);
+
+
+
+          //check for tie ( only needed for player1 ) CHECK AFTER checkWin
+          // if(this.player1.numbers.length == 0){
+          //   player1.reset()
+          //   player2.reset()
+          //   player1.turn = true;
+          //   $("#winMessaege").html("<i>TIE!</i>")
+          //   $("#winMessaege").fadeIn()
+          //   $(".container").fadeOut()
+          //   $("#init-btn").fadeIn()
+          // }
+
+          let check = player1.checkWin();
+          // console.log(player1.won);
+
+          // if (player1.won){
+          //   console.log('p1 win');
+          //   $("#winMessaege").html("<i>Player1 has won!</i>")
+          //   $("#winMessaege").fadeIn()
+          //   $(".container").fadeOut()
+          //
+          //   $("#init-btn").fadeIn()
+          //   player1.reset()
+          //   player2.reset()
+          //   player1.turn = true;
+          // }
+
+
+          // console.log('p1',numbers);
+
+          //switch players
+          player1.switch(); player2.switch();
+        } else { // * PLAYER 2 *
 
           $(this).addClass("clickedGreen");
-          let id = parseInt(e.currentTarget.id);
-          let index = numbers.indexOf(id);
-          let numArrLen = numbers.length;
-          let pick = removePick(index, numArrLen);
-          player2.select(id);
+          let id = parseInt(e.currentTarget.id);      console.log('p2 id:', id);
+
+          let picked = player2.removeNumber(e.currentTarget.id, true);
+          if(picked) player1.removeNumber;
+
           player2.switch();
           player1.switch();
-          // console.log(player2.selected);
-          player2.checkWin()
-          // console.log(player2.won);
-          if (player2.won){
-            $("#winMessaege").html("<i>Player2 has won!</i>")
-            $("#winMessaege").fadeIn()
-            console.log('p2 win');
-            $(".container").fadeOut()
 
-            $("#init-btn").fadeIn()
-            player1.reset()
-            player2.reset()
-            player1.turn = true;
-          }
+          // TIE CHECK
+          // if(numbers.length == 0){
+          //   player1.reset()
+          //   player2.reset()
+          //   player1.turn = true;
+          //   $("#winMessaege").html("<i>TIE!</i>")
+          //   $("#winMessaege").fadeIn()
+          //   $(".container").fadeOut()
+          //   $("#init-btn").fadeIn()
+          // }
+
+          // console.log(player2.selected);
+
+          let check = player2.checkWin();
+
+          // if (player2.won){
+          //   $("#winMessaege").html("<i>Player2 has won!</i>")
+          //   $("#winMessaege").fadeIn()
+          //   console.log('p2 win');
+          //   $(".container").fadeOut()
+          //
+          //   $("#init-btn").fadeIn()
+          //   player1.reset()
+          //   player2.reset()
+          //   player1.turn = true;
+          // }
+
+          //switch players
+          player1.switch(); player2.switch();
         }
+
       }) // .click
     } //for num
   });
@@ -85,21 +124,61 @@ class Player {
     this.turn = turn;
     this.symbol = symbol,
     this.selected = [],
-    this.won = false
+    // this.won = false,
+    this.numbers = [1,2,3,4,5,6,7,8,9]
   }
 
   switch(){
     this.turn = !this.turn;
   }
 
-  select(number){
-    this.selected.push(number);
-  }
-
   reset(){
     this.turn = false;
     this.selected = [];
-    this.won = false;
+    this.numbers = [1,2,3,4,5,6,7,8,9];
+    // this.won = false;
+  }
+
+  getLength(){
+    return this.numbers.length;
+  }
+
+  removeNumber(number, isPlayer){
+    const num = parseInt(number);
+
+    function removePick(num) {
+      let initNumbersLength = this.numbers.length;
+      let index = this.numbers.indexOf(num);
+
+      if (index > -1) this.numbers.splice(index, 1);
+      if (this.numbers.length < initArrLength) return true;
+      return false;
+    }
+
+    if(!isPlayer){
+      let pick = removePick(num)
+      return pick;
+    }
+
+    if( typeof(index) == 'number' ){
+
+      let pick = removePick(num);
+      if (pick){
+        this.selected.push(num);
+        return true;
+      }
+
+    } else {
+
+      return false;
+
+    }
+
+
+
+
+
+
   }
 
   checkWin(){
@@ -131,6 +210,7 @@ class Player {
     }
 
     // change this.won status
-    if(result) this.won = true;
+    // if(result) this.won = true;
+    return result;
   }//checkWin
 }//player class
