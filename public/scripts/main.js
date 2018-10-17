@@ -6,7 +6,7 @@ $(document).ready(function(){
 
     $(this).fadeOut(500);
     $(".container").fadeIn(1000);
-    $("#winMessaege").fadeOut()
+    $("#message").fadeOut()
 
     //init players
     var player1 = new Player(true, 'X');
@@ -14,105 +14,67 @@ $(document).ready(function(){
 
     console.log('* INIT *',player1,player2);
 
-    //array holds numers
-    var numbers = [1,2,3,4,5,6,7,8,9]
-    console.log('init',numbers);
-
-    for (num of numbers) {
+    for (var num = 1; num <= 9; num++) {
       $(`#${num}`).removeClass("clickedGreen");
       $(`#${num}`).removeClass("clickedRed");
 
       $(`#${num}`).click(function(e){
 
-        function removePick(numIndex, arrLength, mainArray) {
-            if (numIndex > -1) mainArray.splice(numIndex, 1);
-            if (mainArray.length < arrLength) return mainArray;
-        }
-
-
         if(player1.turn){ //  * PLAYER 1 *
 
+          let message = true;
           $(this).addClass("clickedRed");
-          // let id = parseInt(e.currentTarget.id);
 
+          //removeNumber deletes pick from array
           let picked = player1.removeNumber(e.currentTarget.id, true);
+          //if successful deletes from player2's array
           if(picked) player2.removeNumber(id, false);
 
-
-
-          //check for tie ( only needed for player1 ) CHECK AFTER checkWin
-          // if(this.player1.numbers.length == 0){
-          //   player1.reset()
-          //   player2.reset()
-          //   player1.turn = true;
-          //   $("#winMessaege").html("<i>TIE!</i>")
-          //   $("#winMessaege").fadeIn()
-          //   $(".container").fadeOut()
-          //   $("#init-btn").fadeIn()
-          // }
-
+          //checkWin returns true is 3 in a row
           let check = player1.checkWin();
-          // console.log(player1.won);
+          //length of array, if 9 all moves made
+          let count = player1.getLength();
 
-          // if (player1.won){
-          //   console.log('p1 win');
-          //   $("#winMessaege").html("<i>Player1 has won!</i>")
-          //   $("#winMessaege").fadeIn()
-          //   $(".container").fadeOut()
-          //
-          //   $("#init-btn").fadeIn()
-          //   player1.reset()
-          //   player2.reset()
-          //   player1.turn = true;
-          // }
+          //tie and win message. message no longer true, will end game
+          if(count == 9 && !check){
+            message = "Tie Break! No Winner This Time!"
+          } else if (check) {
+            message = "Player1 Has Won!!"
+          }
 
+          //end game
+          if(!message){
+            $("#message").text(message).fadeIn();
+            $(".container").fadeOut();
+            $("#init-btn").fadeIn();
+            player1.reset(true); player2.reset();
+          }
 
-          // console.log('p1',numbers);
-
-          //switch players
+          //switch players, continue game
           player1.switch(); player2.switch();
+
         } else { // * PLAYER 2 *
 
+          let message = true;
           $(this).addClass("clickedGreen");
-          let id = parseInt(e.currentTarget.id);      console.log('p2 id:', id);
-
           let picked = player2.removeNumber(e.currentTarget.id, true);
-          if(picked) player1.removeNumber;
-
-          player2.switch();
-          player1.switch();
-
-          // TIE CHECK
-          // if(numbers.length == 0){
-          //   player1.reset()
-          //   player2.reset()
-          //   player1.turn = true;
-          //   $("#winMessaege").html("<i>TIE!</i>")
-          //   $("#winMessaege").fadeIn()
-          //   $(".container").fadeOut()
-          //   $("#init-btn").fadeIn()
-          // }
-
-          // console.log(player2.selected);
-
+          if(picked) player1.removeNumber(id, false);
           let check = player2.checkWin();
-
-          // if (player2.won){
-          //   $("#winMessaege").html("<i>Player2 has won!</i>")
-          //   $("#winMessaege").fadeIn()
-          //   console.log('p2 win');
-          //   $(".container").fadeOut()
-          //
-          //   $("#init-btn").fadeIn()
-          //   player1.reset()
-          //   player2.reset()
-          //   player1.turn = true;
-          // }
-
-          //switch players
+          let count = player2.getLength();
+          if(count == 9 && !check){
+            message = "Tie Break! No Winner This Time!"
+          } else if (check) {
+            message = "Player1 Has Won!!"
+          }
+          if(!message){
+            $("#message").text(message).fadeIn();
+            $(".container").fadeOut();
+            $("#init-btn").fadeIn();
+            player1.reset(true); player2.reset();
+          }
           player1.switch(); player2.switch();
-        }
 
+        }// end player2
       }) // .click
     } //for num
   });
@@ -132,8 +94,9 @@ class Player {
     this.turn = !this.turn;
   }
 
-  reset(){
+  reset(player1){
     this.turn = false;
+    if(player1) this.turn = true;
     this.selected = [];
     this.numbers = [1,2,3,4,5,6,7,8,9];
     // this.won = false;
