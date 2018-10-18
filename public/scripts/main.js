@@ -24,71 +24,54 @@ $(document).ready(function(){
           //removeNumber deletes pick from array
           let picked = player1.removeNumber(e.currentTarget.id, true);
 
-          console.log('player1 picked:', picked);
-          console.log('player1 numbers:', player1.numbers);
-
-          //if successful deletes from player2's array + color square
+          //if successful pick
           if(picked) {
-            let player2Remove = player2.removeNumber(e.currentTarget.id, false)
-            ;
-            console.log('player2Remove:',player2Remove);
-            console.log('player2 numbers:', player2.numbers);
+            //delete from player2s array
+            let player2Remove = player2.removeNumber(e.currentTarget.id, false);
 
+            //add color to square
             $(this).addClass("clickedRed");
 
+            //run method which changes players.won if sequence matched
             player1.checkWin()
 
-            //length of array, if 9 all moves made | only needed for player1
+            //if 0, all moves made. only needed for player1
             let count = player1.getLength();
 
             //change message if won or tie
             if( player1.won ) message = "Player1 Has Won!";
-            if( count == 9 && player1.won == false ) message = "Tie Break! No Winner This Time";
-            // console.log('player1 msg:',message);
+            if( count == 0 && player1.won == false ) message = "Tie Break! No Winner This Time";
 
             //end game or continue
             if(message != true){
+
+              //change player props back to intitial
               player1.reset(true); player2.reset(false);
+
+              //ending display
               $("#message").text(message).fadeIn();
               $(".container").fadeOut();
               $("#init-btn").fadeIn();
-              console.log(player1, player2);
+
             } else {
+
               //continue if no win or tie
               player1.switch(); player2.switch();
+
             }
 
 
-
           }//if picked
-
-
-
-          // console.log('player1', '| picked',picked,'| won',player1.won), '| player1.selected',player1.selected, '| numbers',player1.numbers;
 
         } else { // * PLAYER 2 *
 
           let message = true;
-
           let picked = player2.removeNumber(e.currentTarget.id, true);
-
-          console.log('player2 picked:', picked);
-          console.log('player2 numbers:', player2.numbers);
-
-
           if(picked) {
             let player1Remove = player1.removeNumber(e.currentTarget.id, false);
-
-            console.log('player1Remove',player1Remove);
-            console.log('player1 numbers:', player1.numbers);
-
             $(this).addClass("clickedGreen");
-
             player2.checkWin();
-
             if (player2.won) message = "Player2 Has Won!!";
-            console.log('player2 msg:',message);
-
             if(message != true){
               player1.reset(true); player2.reset(false);
               $("#message").text(message).fadeIn();
@@ -96,19 +79,14 @@ $(document).ready(function(){
               $("#init-btn").fadeIn();
               console.log(player1, player2);
             } else {
-              player1.switch(); player2.switch();              
+              player1.switch(); player2.switch();
             }
 
-
           }//if picked
-
-
-          // console.log('player2', '| picked',picked, '| won',player2.won), '| player2.selected',player2.selected, '| numbers',player2.numbers;
-
         }// end player2
       }) // .click
     } //for num
-  });
+  });// #init-btn click
 });//doc ready
 
 
@@ -143,19 +121,23 @@ class Player {
     let run = false;
     let index  = this.numbers.indexOf(num);
 
+    //if isPlayer and number exists in array
     if(isPlayer && index+1 >= 1){
+        //run to remove number from array
         run = true;
+
+        //selected keeps track of players picked squares
         this.selected.push(num);
     }
 
     // console.log(`num:${num} | index:${index} | run:${run} | id:${id} | isPlayer:${isPlayer}`);
 
-    //if found remove+add to selected. if not return false
+    //if found remove from array, or if is not player
+    // only not player if picked == true, means a number would have been picked by opposite player for this to run again
     if(run || !isPlayer){
       this.numbers.splice(index,1);
       return true;
     } else {
-      // console.log('flop');
       return false;
     }
 
