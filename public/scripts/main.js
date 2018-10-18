@@ -46,22 +46,22 @@ $(document).ready(function(){
             if( count == 9 && player1.won == false ) message = "Tie Break! No Winner This Time";
             // console.log('player1 msg:',message);
 
-            //end game
+            //end game or continue
             if(message != true){
-              console.log('player1', '| picked',picked, '| count',count, '| won',player1.won), '| numbers',player1.numbers;
+              player1.reset(true); player2.reset(false);
               $("#message").text(message).fadeIn();
               $(".container").fadeOut();
               $("#init-btn").fadeIn();
-              player1.reset(true); player2.reset();
-              message = true;
+              console.log(player1, player2);
+            } else {
+              //continue if no win or tie
+              player1.switch(); player2.switch();
             }
+
+
 
           }//if picked
 
-
-
-          //switch players, continue game
-          player1.switch(); player2.switch();
 
 
           // console.log('player1', '| picked',picked,'| won',player1.won), '| player1.selected',player1.selected, '| numbers',player1.numbers;
@@ -90,17 +90,17 @@ $(document).ready(function(){
             console.log('player2 msg:',message);
 
             if(message != true){
+              player1.reset(true); player2.reset(false);
               $("#message").text(message).fadeIn();
               $(".container").fadeOut();
               $("#init-btn").fadeIn();
-              player1.reset(true); player2.reset();
-              message = true;
+              console.log(player1, player2);
+            } else {
+              player1.switch(); player2.switch();              
             }
 
-            player1.switch(); player2.switch();
 
           }//if picked
-
 
 
           // console.log('player2', '| picked',picked, '| won',player2.won), '| player2.selected',player2.selected, '| numbers',player2.numbers;
@@ -148,7 +148,7 @@ class Player {
         this.selected.push(num);
     }
 
-    console.log(`num:${num} | index:${index} | run:${run} | id:${id} | isPlayer:${isPlayer}`);
+    // console.log(`num:${num} | index:${index} | run:${run} | id:${id} | isPlayer:${isPlayer}`);
 
     //if found remove+add to selected. if not return false
     if(run || !isPlayer){
