@@ -24,60 +24,86 @@ $(document).ready(function(){
           //removeNumber deletes pick from array
           let picked = player1.removeNumber(e.currentTarget.id, true);
 
+          console.log('player1 picked:', picked);
+          console.log('player1 numbers:', player1.numbers);
+
           //if successful deletes from player2's array + color square
           if(picked) {
-            player2.removeNumber(e.currentTarget.id, false);
+            let player2Remove = player2.removeNumber(e.currentTarget.id, false)
+            ;
+            console.log('player2Remove:',player2Remove);
+            console.log('player2 numbers:', player2.numbers);
+
             $(this).addClass("clickedRed");
-          }
 
-          player1.checkWin()
+            player1.checkWin()
 
-          //length of array, if 9 all moves made | only needed for player1
-          let count = player1.getLength();
+            //length of array, if 9 all moves made | only needed for player1
+            let count = player1.getLength();
 
-          //change message if won or tie
-          if( player1.won ) message = "Player1 Has Won!";
-          if( count == 9 && player1.won == false ) message = "Tie Break! No Winner This Time";
+            //change message if won or tie
+            if( player1.won ) message = "Player1 Has Won!";
+            if( count == 9 && player1.won == false ) message = "Tie Break! No Winner This Time";
+            // console.log('player1 msg:',message);
 
-          //end game
-          if(message != true){
-            console.log('player1', '| picked',picked, '| count',count, '| won',player1.won), '| numbers',player1.numbers;
-            $("#message").text(message).fadeIn();
-            $(".container").fadeOut();
-            $("#init-btn").fadeIn();
-            player1.reset(true); player2.reset();
-            message = true;
-          }
+            //end game
+            if(message != true){
+              console.log('player1', '| picked',picked, '| count',count, '| won',player1.won), '| numbers',player1.numbers;
+              $("#message").text(message).fadeIn();
+              $(".container").fadeOut();
+              $("#init-btn").fadeIn();
+              player1.reset(true); player2.reset();
+              message = true;
+            }
+
+          }//if picked
+
+
 
           //switch players, continue game
           player1.switch(); player2.switch();
 
-          // console.log('player1', '| picked',picked, '| count',count, '| won',player1.won);
-          console.log('player1', '| picked',picked, '| count',count, '| won',player1.won), '| numbers',player1.numbers;
-          
+
+          // console.log('player1', '| picked',picked,'| won',player1.won), '| player1.selected',player1.selected, '| numbers',player1.numbers;
+
         } else { // * PLAYER 2 *
 
           let message = true;
 
           let picked = player2.removeNumber(e.currentTarget.id, true);
+
+          console.log('player2 picked:', picked);
+          console.log('player2 numbers:', player2.numbers);
+
+
           if(picked) {
-            player1.removeNumber(e.currentTarget.id, false);
+            let player1Remove = player1.removeNumber(e.currentTarget.id, false);
+
+            console.log('player1Remove',player1Remove);
+            console.log('player1 numbers:', player1.numbers);
+
             $(this).addClass("clickedGreen");
-          }
 
-          player2.checkWin();
+            player2.checkWin();
 
-          if (player2.won) message = "Player2 Has Won!!";
+            if (player2.won) message = "Player2 Has Won!!";
+            console.log('player2 msg:',message);
 
-          if(message != true){
-            $("#message").text(message).fadeIn();
-            $(".container").fadeOut();
-            $("#init-btn").fadeIn();
-            player1.reset(true); player2.reset();
-            message = true;
-          }
+            if(message != true){
+              $("#message").text(message).fadeIn();
+              $(".container").fadeOut();
+              $("#init-btn").fadeIn();
+              player1.reset(true); player2.reset();
+              message = true;
+            }
 
-          player1.switch(); player2.switch();
+            player1.switch(); player2.switch();
+
+          }//if picked
+
+
+
+          // console.log('player2', '| picked',picked, '| won',player2.won), '| player2.selected',player2.selected, '| numbers',player2.numbers;
 
         }// end player2
       }) // .click
@@ -115,25 +141,21 @@ class Player {
 
     let num = parseInt(id);
     let run = false;
+    let index  = this.numbers.indexOf(num);
 
-    if(!isPlayer) run = true;
-
-    if(!run){
-      //run loop to check if id number is in array
-      for (var i = 0; i < this.numbers.length; i++){
-        if (i == num) {
-          run = true;
-        }
-      }
+    if(isPlayer && index+1 >= 1){
+        run = true;
+        this.selected.push(num);
     }
 
+    console.log(`num:${num} | index:${index} | run:${run} | id:${id} | isPlayer:${isPlayer}`);
+
     //if found remove+add to selected. if not return false
-    if(run){
-      let index = this.numbers.indexOf(num);
+    if(run || !isPlayer){
       this.numbers.splice(index,1);
-      this.selected.push(num)
       return true;
     } else {
+      // console.log('flop');
       return false;
     }
 
